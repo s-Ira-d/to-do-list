@@ -4,7 +4,7 @@ import todosData from "./data/todo-data.json";
 import ToDoList from "./components/ToDoList.js";
 import ToDoEditor from "./components/ToDoEditor.js";
 import InfoToDo from "./components/InfoToDo.js";
-import FilterToDo from "./components/FilterToDo.js";
+import FilterTodo from "./components/FilterToDo.js";
 
 class App extends Component {
   state = {
@@ -38,30 +38,34 @@ class App extends Component {
     }));
   };
 
-  // getFilterToDo = (e) => {
-  //   const { todo, filter } = this.setState;
-  //   return todo.filter((t) =>
-  //     text.toLowerCase().includes(filter.toLowerCase())
-  //   );
-  // };
+  getFilterTodo = () => {
+    const { todos, filter } = this.state;
+    return todos.filter((t) =>
+      t.text.toLowerCase().includes(filter.toLocaleLowerCase())
+    );
+  };
 
-  // changeFilter = (e) => {
-  //   this.setState({ filter: e.target.value });
-  // };
+  changeFilter = (e) => {
+    this.setState({ filter: e.target.value });
+  };
 
   render() {
     const { todos } = this.state;
     const completedCount = todos.filter((item) => item.completed).length;
+
     return (
       <div>
         <ToDoEditor onAdd={this.addToDo} />
+
         <ToDoList
           onDelete={this.deleteToDo}
-          todos={this.state.todos}
+          todos={this.getFilterTodo()}
           onToggle={this.toggleCompleted}
         />
+
         <InfoToDo total={todos.length} completed={completedCount} />
-        {/* <FilterToDo value={filter} onChange={this.changeFilter} /> */}
+
+        <FilterTodo value={this.state.filter} onChange={this.changeFilter} />
       </div>
     );
   }
