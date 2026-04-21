@@ -12,6 +12,22 @@ class App extends Component {
     filter: "",
   };
 
+  componentDidMount() {
+    const savedTodos = localStorage.getItem("todos");
+
+    if (savedTodos) {
+      this.setState({
+        todos: JSON.parse(savedTodos),
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.todos !== this.state.todos) {
+      localStorage.setItem("todos", JSON.stringify(this.state.todos));
+    }
+  }
+
   addToDo = (text) => {
     const todo = {
       id: Date.now().toString(),
@@ -19,29 +35,30 @@ class App extends Component {
       completed: false,
     };
 
-    this.setState((prevTodos) => ({
-      todos: [todo, ...prevTodos.todos],
+    this.setState((prevState) => ({
+      todos: [todo, ...prevState.todos],
     }));
   };
 
   deleteToDo = (id) => {
-    this.setState((prevTodos) => ({
-      todos: prevTodos.todos.filter((item) => item.id !== id),
+    this.setState((prevState) => ({
+      todos: prevState.todos.filter((item) => item.id !== id),
     }));
   };
 
   toggleCompleted = (id) => {
-    this.setState((prevTodos) => ({
-      todos: prevTodos.todos.map((item) =>
-        item.id === id ? { ...item, completed: !item.competed } : item
+    this.setState((prevState) => ({
+      todos: prevState.todos.map((item) =>
+        item.id === id ? { ...item, completed: !item.completed } : item
       ),
     }));
   };
 
   getFilterTodo = () => {
     const { todos, filter } = this.state;
+
     return todos.filter((t) =>
-      t.text.toLowerCase().includes(filter.toLocaleLowerCase())
+      t.text.toLowerCase().includes(filter.toLowerCase())
     );
   };
 
@@ -50,7 +67,8 @@ class App extends Component {
   };
 
   render() {
-    const { todos } = this.state;
+    const { todos, filter } = this.state;
+
     const completedCount = todos.filter((item) => item.completed).length;
 
     return (
@@ -65,7 +83,7 @@ class App extends Component {
 
         <InfoToDo total={todos.length} completed={completedCount} />
 
-        <FilterTodo value={this.state.filter} onChange={this.changeFilter} />
+        <FilterTodo value={filter} onChange={this.changeFilter} />
       </div>
     );
   }
