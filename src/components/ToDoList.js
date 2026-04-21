@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./ToDoList.module.css";
 
-const ToDoList = ({ todos, onDelete, onToggle }) => {
+const ToDoList = ({ todos, onDelete, onToggle, getDuration }) => {
   return (
     <ul className={styles.list}>
       {todos.map((item) => {
@@ -13,13 +13,20 @@ const ToDoList = ({ todos, onDelete, onToggle }) => {
                 type="checkbox"
                 checked={item.completed}
               />
-              <span
-                className={`${styles.text} ${
-                  item.completed ? styles.completed : ""
-                }`}
-              >
-                {item.text}
-              </span>
+
+              <div>
+                <span
+                  className={`${styles.text} ${
+                    item.completed ? styles.completed : ""
+                  }`}
+                >
+                  {item.text}
+                </span>
+
+                {item.completed && getDuration && (
+                  <small className={styles.time}>⏱ {getDuration(item)}</small>
+                )}
+              </div>
             </div>
 
             <button className={styles.button} onClick={() => onDelete(item.id)}>

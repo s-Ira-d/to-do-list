@@ -33,6 +33,8 @@ class App extends Component {
       id: Date.now().toString(),
       text,
       completed: false,
+      createdAt: Date.now(),
+      completedAt: null,
     };
 
     this.setState((prevState) => ({
@@ -49,9 +51,26 @@ class App extends Component {
   toggleCompleted = (id) => {
     this.setState((prevState) => ({
       todos: prevState.todos.map((item) =>
-        item.id === id ? { ...item, completed: !item.completed } : item
+        item.id === id
+          ? {
+              ...item,
+              completed: !item.completed,
+              completedAt: !item.completed ? Date.now() : null,
+            }
+          : item
       ),
     }));
+  };
+
+  getTaskDuration = (todo) => {
+    if (!todo.completed || !todo.completedAt) return null;
+
+    const duration = todo.completedAt - todo.createdAt;
+
+    const seconds = Math.floor(duration / 1000);
+    const minutes = Math.floor(seconds / 60);
+
+    return `${minutes}m ${seconds % 60}s`;
   };
 
   getFilterTodo = () => {
@@ -79,6 +98,7 @@ class App extends Component {
           onDelete={this.deleteToDo}
           todos={this.getFilterTodo()}
           onToggle={this.toggleCompleted}
+          getDuration={this.getTaskDuration}
         />
 
         <InfoToDo total={todos.length} completed={completedCount} />
